@@ -1,0 +1,100 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.popoverWrapper {
+    padding: 0;
+    display: block;
+}
+.popperClass {
+    margin-top: 50px;
+    margin-left: 330px;
+    display: block;
+    width: 100px;
+}
+.button {
+    background: #00a99d;
+    width: 100%;
+    text-align: center;
+    display: block;
+    color: #fff;
+    padding: 10px 0;
+    font-family: cursive;
+    cursor: pointer;
+}
+
+.popperBody{
+    position: fixed;
+}
+.popperContent {
+    background: #000;
+    padding: 1rem;
+    color: #fff;
+    line-height: 26px;
+    width: 100%;
+    font-family: cursive;
+  position: relative;
+}
+.popperBody.bottom {
+    padding-top: 13px;
+}
+
+.popperBody.left {
+    padding-right: 14px;
+}
+
+.caret.bottom {
+    width: 0;
+    content: "";
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-bottom: 14px solid #000;
+    position: absolute;
+    top: 0;
+}
+
+.caret.top {
+    width: 0;
+    content: "";
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 14px solid #000;
+    position: absolute;
+    bottom: 0;
+}
+
+.caret.left {
+    width: 0;
+    content: "";
+    border-left: 14px solid #000000;
+    /* border-right: 14px solid transparent; */
+    border-top: 14px solid transparent;
+    position: absolute;
+    border-bottom: 14px solid transparent;
+    /* bottom: 0; */
+    z-index: 1;
+    right: 0;
+}
+
+.caret.right {
+    width: 0;
+    content: "";
+    border-right: 14px solid #000000;
+    /* border-right: 14px solid transparent; */
+    border-top: 14px solid transparent;
+    position: absolute;
+    border-bottom: 14px solid transparent;
+    /* bottom: 0; */
+    z-index: 1;
+    left: 0;
+}
+
+.popperBody.top {
+    padding-bottom: 14px;
+}
+
+.popperBody.right {
+    padding-left: 14px;
+}
