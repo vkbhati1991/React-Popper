@@ -2,9 +2,10 @@
 import React, { Component, Fragment as PopperWrpper } from "react";
 import PropTypes from "prop-types";
 import PopperContent from "./PopperContent";
-import PopperPlacement from  "./PopperPlacement";
+import PopperPlacement from "./PopperPlacement";
 import "./index.css";
 
+window.popperRef = [];
 class Popper extends Component {
 
     static displayName = "Popper";
@@ -35,28 +36,32 @@ class Popper extends Component {
         containerWidth: null
     }
 
-    componentDidUpdate() {
-        if (this.state.isOpen && this.props.trigger === "click") {
-            document.addEventListener("mousedown", this.handleOutside);
-        } else {
-            document.removeEventListener("mousedown", this.handleOutside);
-        }
+    componentDidMount() {
+        document.addEventListener("click", this.handleOutside);
     }
 
     componentWillUnmount() {
         document.addEventListener("mousedown", this.handleOutside);
     }
-
     handleOutside = (event) => {
-        const container = this.container.current;
-        const elem = this.elem.current;
-        const isClose = (container && container.elem && container.elem.contains(event.target)) || (elem && elem.contains(event.target))
+        const cn = this.container.current;
+        const el = this.elem.current;
+        if (!cn || !el) return;
+    
+        const clickElArray = window.popperRef.filter((e)=> e && e.contains(event.target));
+
+        const isClose = clickElArray.length > 0 || (cn && cn.elem && cn.elem.contains(event.target)) || (el && el.contains(event.target))
+        
         if (isClose) return;
+        
         this.setState({ isOpen: false });
+        window.popperRef.length = 0;
     }
 
     openPopper = () => {
-        this.setState({ isOpen: !this.state.isOpen });
+        this.setState({ isOpen: !this.state.isOpen },()=>{
+            window.popperRef.push(this.container.current && this.container.current.elem);
+        });
     }
 
     setElemStyle = (placementValue) => {
@@ -65,7 +70,7 @@ class Popper extends Component {
         if (!el) return;
 
         return PopperPlacement(el, this.props.containerWidth, placementValue);
-       
+
     }
 
     render() {
@@ -79,6 +84,7 @@ class Popper extends Component {
                 >{element}
                 </span>
                 {this.state.isOpen && <PopperContent
+                    scoped={"vs-popper"}
                     ref={this.container}
                     children={children}
                     containerWidth={containerWidth}

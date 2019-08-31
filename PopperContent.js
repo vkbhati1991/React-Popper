@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 
 import { PLACEMENT } from "./Placement";
 
+window.openArray = [];
 class PopperContent extends Component {
 
     constructor(props) {
@@ -33,7 +34,7 @@ class PopperContent extends Component {
         document.body.appendChild(this.elem);
         const place = this.getPopperPlacement();
         const { caretStyle, containerStyle } = this.props.setElemStyle(place);
-
+        
         this.setState({
             caretStyle,
             containerStyle
@@ -85,7 +86,6 @@ class PopperContent extends Component {
     }
 
     renderPopperContent = () => {
-
         const { popperContentClass, children } = this.props;
         const popperClassName = `popperBody ${this.getPopperPlacement()}`
         const caretClassName = `caret ${this.getPopperPlacement()}`
