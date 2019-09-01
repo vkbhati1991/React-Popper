@@ -4,8 +4,6 @@ import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 
 import { PLACEMENT } from "./Placement";
-
-window.openArray = [];
 class PopperContent extends Component {
 
     constructor(props) {
@@ -22,12 +20,11 @@ class PopperContent extends Component {
     }
 
     static propTypes = {
-        placementValue: PropTypes.string,
+        placement: PropTypes.string,
         children: PropTypes.any,
-        popperContentClass: PropTypes.string,
+        contentClass: PropTypes.string,
         setElemStyle: PropTypes.any,
-        containerWidth: PropTypes.number,
-
+        width: PropTypes.number
     }
 
     componentDidMount() {
@@ -48,7 +45,7 @@ class PopperContent extends Component {
 
     getPopperPlacement = () => {
 
-        let placement;
+        let _placement;
 
         const _popper = this.popper.current;
         const _el = this.props.el;
@@ -58,42 +55,42 @@ class PopperContent extends Component {
         const el = _el.getBoundingClientRect();
         const popper = _popper.getBoundingClientRect();
 
-        switch (this.props.placementValue) {
+        switch (this.props.placement) {
             case PLACEMENT.TOP:
-                placement = el.top > popper.height ? PLACEMENT.TOP : PLACEMENT.BOTTOM;
+                _placement = el.top > popper.height ? PLACEMENT.TOP : PLACEMENT.BOTTOM;
                 break;
 
             case PLACEMENT.BOTTOM:
                 const elBottom = window.innerHeight - el.top - el.height;
-                placement = elBottom > popper.height ? PLACEMENT.BOTTOM : PLACEMENT.TOP;
+                _placement = elBottom > popper.height ? PLACEMENT.BOTTOM : PLACEMENT.TOP;
                 break;
 
             case PLACEMENT.LEFT:
-                placement = el.left > popper.width ? PLACEMENT.LEFT : PLACEMENT.RIGHT;
+                _placement = el.left > popper.width ? PLACEMENT.LEFT : PLACEMENT.RIGHT;
                 break;
 
             case PLACEMENT.RIGHT:
                 const elRight = window.innerWidth - el.width - el.left;
-                placement = elRight > popper.width ? PLACEMENT.RIGHT : PLACEMENT.LEFT;
+                _placement = elRight > popper.width ? PLACEMENT.RIGHT : PLACEMENT.LEFT;
                 break;
 
             default:
-                placement = PLACEMENT.BOTTOM;
+                _placement = PLACEMENT.BOTTOM;
 
         }
 
-        return placement;
+        return _placement;
     }
 
     renderPopperContent = () => {
-        const { popperContentClass, children } = this.props;
+        const { contentClass, children } = this.props;
         const popperClassName = `popperBody ${this.getPopperPlacement()}`
         const caretClassName = `caret ${this.getPopperPlacement()}`
         return (
             <PopperWrpper>
                 <div ref={this.popper} style={this.state.containerStyle} className={popperClassName}>
                     <div style={this.state.caretStyle} className={caretClassName}></div>
-                    <div className={popperContentClass}>{children}</div>
+                    <div className={contentClass}>{children}</div>
                 </div>
             </PopperWrpper>
         )

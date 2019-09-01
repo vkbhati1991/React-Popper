@@ -23,73 +23,98 @@ class Popper extends Component {
         element: PropTypes.any,
         children: PropTypes.any,
         elementClass: PropTypes.string,
-        popperContentClass: PropTypes.string,
-        placementValue: PropTypes.string,
-        trigger: PropTypes.string
+        contentClass: PropTypes.string,
+        placement: PropTypes.string,
+        trigger: PropTypes.string,
+        width: PropTypes.number
     }
 
     static defaultProps = {
-        placementValue: "bottom",
         elementClass: "popperClass",
-        dropDownClass: "popperBody",
+        contentClass: "popperBody",
+        placement: "bottom",
         trigger: "click",
-        containerWidth: null
+        width: 200
     }
 
     componentDidMount() {
-        document.addEventListener("click", this.handleOutside);
+        if (this.props.trigger === "click") {
+            document.addEventListener("click", this.handleOutside);
+        } else {
+            document.addEventListener("mousemove", this.handleOutside);
+        }
+
     }
 
     componentWillUnmount() {
-        document.addEventListener("mousedown", this.handleOutside);
+        if (this.props.trigger === "click") {
+            document.removeEventListener("click", this.handleOutside);
+        } else {
+            document.removeEventListener("mousemove", this.handleOutside);
+        }
     }
     handleOutside = (event) => {
         const cn = this.container.current;
         const el = this.elem.current;
         if (!cn || !el) return;
-    
-        const clickElArray = window.popperRef.filter((e)=> e && e.contains(event.target));
 
-        const isClose = clickElArray.length > 0 || (cn && cn.elem && cn.elem.contains(event.target)) || (el && el.contains(event.target))
-        
-        if (isClose) return;
-        
+        const elArray = window.popperRef.filter((e) => e && e.contains(event.target));
+        const isNotClose = elArray.length > 0 || (cn && cn.elem && cn.elem.contains(event.target)) || (el && el.contains(event.target))
+        if (isNotClose) return;
+
         this.setState({ isOpen: false });
         window.popperRef.length = 0;
     }
 
     openPopper = () => {
-        this.setState({ isOpen: !this.state.isOpen },()=>{
+        this.setState({ isOpen: !this.state.isOpen }, () => {
             window.popperRef.push(this.container.current && this.container.current.elem);
         });
     }
 
-    setElemStyle = (placementValue) => {
+    setElemStyle = (placement) => {
         const el = this.elem.current;
 
         if (!el) return;
 
-        return PopperPlacement(el, this.props.containerWidth, placementValue);
+        return PopperPlacement(el, this.props.width, placement);
 
     }
 
+    renderElem = () => {
+        if (this.props.trigger === "hover") {
+            return (
+                <span
+                    ref={this.elem}
+                    className={this.props.elementClass}
+                    onMouseEnter={this.openPopper}
+                >
+                    {this.props.element}
+                </span>
+            )
+        }
+
+        return (
+            <span
+                ref={this.elem}
+                className={this.props.elementClass}
+                onClick={this.openPopper}
+            >
+                {this.props.element}
+            </span>
+        )
+    }
+
     render() {
-        const { element, children, elementClass, popperContentClass, containerWidth, placementValue } = this.props;
         return (
             <PopperWrpper>
-                <span ref={this.elem}
-                    className={elementClass}
-                    onClick={this.openPopper}
-
-                >{element}
-                </span>
+                {this.renderElem()}
                 {this.state.isOpen && <PopperContent
-                    scoped={"vs-popper"}
                     ref={this.container}
-                    children={children}
-                    containerWidth={containerWidth}
-                    popperContentClass={popperContentClass}
-                    placementValue={placementValue}
+                    children={this.props.children}
+                    wdth={this.props.width}
+                    contentClass={this.props.contentClass}
+                    placement={this.props.placement}
                     setElemStyle={this.setElemStyle}
                     el={this.elem.current}
                 />}
